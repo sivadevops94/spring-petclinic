@@ -33,6 +33,19 @@ public class PetControllerTests {
     private static final int TEST_PET_ID = 1;
 
     @Autowired
+      @Test
+    public void testProcessUpdateFormHasErrors() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, TEST_PET_ID)
+            .param("name", "Betty")
+            .param("birthDate", "2015/02/12")
+        )
+            .andExpect(model().attributeHasNoErrors("owner"))
+            .andExpect(model().attributeHasErrors("pet"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("pets/createOrUpdatePetForm"));
+    }
+
+}
     private PetController petController;
 
     @Autowired
@@ -86,8 +99,7 @@ public class PetControllerTests {
             .andExpect(model().attributeExists("pet"))
             .andExpect(view().name("pets/createOrUpdatePetForm"));
     }
-
-    @Test
+@Test
     public void testProcessUpdateFormSuccess() throws Exception {
         mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, TEST_PET_ID)
             .param("name", "Betty")
